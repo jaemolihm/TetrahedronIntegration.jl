@@ -9,3 +9,11 @@ Tetrahedron integration
 ## References
 * P. B. Allen, Phys. Stat. Sol. (b) 120, 629 (1983)
 * Blöchl et al, Phys. Rev. B 16, 232 (1994)
+
+## TODO
+* Full coverage
+* Improve gaussian with small e2-e1, e3-e2, e4-e3, Add tests
+* Implement Blöchl correction (Eq. (22))
+* Which diagonal to cut the cube into tetrahedron
+* Modularize (e0, v0) -> (e1, ..., e8)
+* Add type for piecewise polynomial (?)
