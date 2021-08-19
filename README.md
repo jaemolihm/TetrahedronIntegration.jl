@@ -11,7 +11,10 @@ Tetrahedron integration
 * Blöchl et al, Phys. Rev. B 16, 232 (1994)
 
 ## TODO
+* Add introduction to README
+* Add references
 * Full coverage
+* Docs
 * Improve gaussian with small e2-e1, e3-e2, e4-e3, Add tests
 * Implement Blöchl correction (Eq. (22))
 * Which diagonal to cut the cube into tetrahedron
