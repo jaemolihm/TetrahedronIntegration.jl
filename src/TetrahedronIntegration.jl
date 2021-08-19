@@ -1,6 +1,6 @@
 module TetrahedronIntegration
 
 include("tetrahedron.jl")
-# include("gaussian.jl")
+include("gaussian.jl")
 
 end

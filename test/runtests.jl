@@ -3,5 +3,5 @@ using Test
 
 @testset "TetrahedronIntegration.jl" begin
     include("test_tetrahedron.jl")
-    # include("test_gaussian.jl")
+    include("test_gaussian.jl")
 end
