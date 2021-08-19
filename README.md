@@ -20,3 +20,4 @@ Tetrahedron integration
 * Which diagonal to cut the cube into tetrahedron
 * Modularize (e0, v0) -> (e1, ..., e8)
 * Add type for piecewise polynomial (?)
+* Functions other than gaussian (by quadrature integration?)
