@@ -1,5 +1,6 @@
 module TetrahedronIntegration
 
-# Write your package code here.
+include("tetrahedron.jl")
+# include("gaussian.jl")
 
 end
