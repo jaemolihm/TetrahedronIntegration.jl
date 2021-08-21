@@ -5,6 +5,8 @@ using SpecialFunctions
 
 export gaussian_parallelepiped
 
+# Routines for tetrahedron integration of Gaussian function
+
 """
 Compute ∫_a^b dx exp(-x^2/σ^2) * poly(x) = σ * ∫_{a/σ}^{b/σ} dx exp(-x^2) * poly(σx)
 """
