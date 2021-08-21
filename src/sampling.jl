@@ -1,5 +1,7 @@
 using StaticArrays
 
+export delta_parallelepiped_sampling!
+
 """
 Calcultate val = int_{parallelepiped} d^3k delta(`etarget` - e(k)) / volume
 where `e(k) = e0 + k ⋅ v0`. The parallelepiped region is [-L/2, L/2]^3.

@@ -2,6 +2,7 @@ using StaticArrays
 
 export delta_tetrahedron
 export delta_parallelepiped
+export delta_parallelepiped_vertex
 export delta_tetrahedron_weights
 export delta_tetrahedron_polynomial
 
