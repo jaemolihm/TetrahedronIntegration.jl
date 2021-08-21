@@ -1,15 +1,17 @@
 using LinearAlgebra
-using Polynomials
 using StaticArrays
 using SpecialFunctions
 
 export gaussian_parallelepiped
 
+# Routines for tetrahedron integration of Gaussian function
+
 """
 Compute ∫_a^b dx exp(-x^2/σ^2) * poly(x) = σ * ∫_{a/σ}^{b/σ} dx exp(-x^2) * poly(σx)
+where poly(x) = evalpoly(x, coeffs).
 """
-function integrate_gaussian_times_polynomial(σ::FT, poly::AbstractPolynomial, a, b) where {FT}
-    length(poly.coeffs) > 4 && error("Quartic polynomial not implemented")
+function integrate_gaussian_times_polynomial(σ::FT, coeffs, a, b) where {FT}
+    length(coeffs) > 4 && error("Quartic polynomial not implemented")
     aa = a / σ
     bb = b / σ
     sqrt_pi = sqrt(typeof(σ)(π))
@@ -17,7 +19,7 @@ function integrate_gaussian_times_polynomial(σ::FT, poly::AbstractPolynomial, a
     exp2_a = exp(-aa^2)
     exp2_b = exp(-bb^2)
     val = FT(0)
-    for (i, c) in enumerate(poly.coeffs)
+    for (i, c) in enumerate(coeffs)
         if i == 1
             val += c * sqrt_pi * erf_ba / 2
         elseif i == 2
@@ -38,9 +40,9 @@ values of e(x) at the four vertices of the tetrahedron.
 @inline function gaussian_tetrahedron(σ::FT, e1234) where {FT}
     polys = delta_tetrahedron_polynomial(e1234)
     val = zero(FT)
-    for (e1, e2, poly) in polys
+    for (e1, e2, coeffs) in polys
         e1 == e2 && continue
-        val += integrate_gaussian_times_polynomial(σ, poly, e1, e2)
+        val += integrate_gaussian_times_polynomial(σ, coeffs, e1, e2)
     end
     val
 end
