@@ -4,19 +4,18 @@ using Test
 
 using LinearAlgebra
 using HCubature
-using Polynomials
 using StaticArrays
 using TetrahedronIntegration: integrate_gaussian_times_polynomial
 
 @testset "gaussian" begin
     @testset "gaussian times polynomial" begin
         σ = 0.7
-        poly = ImmutablePolynomial((0.3, 0.4, 0.7, 1.1))
+        coeffs = (0.3, 0.4, 0.7, 1.1)
         a = -0.9
         b = 1.2
-        f(x) = exp(-x^2/σ^2) * poly(x)
+        f(x) = exp(-x^2/σ^2) * evalpoly(x, coeffs)
 
-        @test integrate_gaussian_times_polynomial(σ, poly, a, b) ≈ hquadrature(f, a, b)[1]
+        @test integrate_gaussian_times_polynomial(σ, coeffs, a, b) ≈ hquadrature(f, a, b)[1]
     end
 
     @testset "gaussian parallelepiped" begin

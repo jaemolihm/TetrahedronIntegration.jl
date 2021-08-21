@@ -14,6 +14,9 @@ using TetrahedronIntegration: _evaluate_piecewise_polynomial
     @test delta_parallelepiped(e0 - de + 1e-3, e0, v0, L) ≈ 1.0 / L
     @test delta_parallelepiped(e0 + de + 1e-3, e0, v0, L) ≈ 0
     @test delta_parallelepiped(e0 - de - 1e-3, e0, v0, L) ≈ 0
+
+    # Test small v0
+    @test delta_parallelepiped(e0, e0, [0.0, 0.0, 0.0], L) ≈ 0
 end
 
 @testset "delta_polynomial" begin

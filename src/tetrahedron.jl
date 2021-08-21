@@ -1,5 +1,4 @@
 using StaticArrays
-using Polynomials
 
 export delta_tetrahedron
 export delta_parallelepiped
@@ -185,7 +184,6 @@ end
 # Return the piecewise polynomial function for the delta function integration result.
 @inline function delta_tetrahedron_polynomial(e1234)
     T = eltype(e1234)
-    Poly = ImmutablePolynomial{T, :x, 3}
     e1, e2, e3, e4 = sort(e1234)
     # e1 < etarget <= e2
     c1 = 3 / ((e2 - e1) * (e3 - e1) * (e4 - e1))
@@ -196,15 +194,15 @@ end
     c3 = 3 * (e4 + e3 - e2 - e1) / (e41 * e31 * (e4 - e2) * (e3 -e2))
     # e3 < etarget <= e4
     c4 = 3 / ((e4 - e1) * (e4 - e2) * (e4 - e3))
-    ((e1, e2, Poly(c1 .* (e1^2, -2*e1, 1))),
-     (e2, e3, Poly(c2 .* (-e1-e2, 2, 0) .- c3 .* (e2^2, -2*e2, 1))),
-     (e3, e4, Poly(c4 .* (e4^2, -2*e4, 1)))
+    ((e1, e2, c1 .* (e1^2, -2*e1, 1)),
+     (e2, e3, c2 .* (-e1-e2, 2, 0) .- c3 .* (e2^2, -2*e2, 1)),
+     (e3, e4, c4 .* (e4^2, -2*e4, 1))
     )
 end
 
 function _evaluate_piecewise_polynomial(x, polys)
-    for (e1, e2, poly) in polys
-        e1 < x <= e2 && return poly(x)
+    for (e1, e2, coeffs) in polys
+        e1 < x <= e2 && return evalpoly(x, coeffs)
     end
     return zero(x)
 end
