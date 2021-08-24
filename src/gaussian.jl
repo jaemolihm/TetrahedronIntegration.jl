@@ -48,19 +48,20 @@ values of e(x) at the four vertices of the tetrahedron.
 end
 
 """
+    gaussian_parallelepiped(σ::FT, e0, v0, L)
 Calculate
 ``1/volume * ∫_{parallelepiped} d^3x f(e(x))
 = 1/volume * ∫_{parallelepiped} ∫ dee d^3x f(ee) delta(ee - e(x))
 = ∫ dee f(ee) tetra(ee)``,
-where ``f(ee) = exp(-ee^2/σ^2)``,
+where ``f(ee) = exp(-ee^2/σ^2) / √π``,
 ``tetra(ee) = 1/volume * ∫_{parallelepiped} d^3x delta(ee - e(x))``,
 and e(x) = `e0` + x ⋅ `v0`. The parallelepiped region is [-L/2, L/2]^3.
 Divide the parallelepiped into six tetrahedra and use tetrahedron integration.
 """
 function gaussian_parallelepiped(σ::FT, e0, v0, L) where {FT}
-    if L * norm(v0) < σ * 1e-4
+    if norm(L .* v0) < σ * 1e-4
         # Velocity is too small. Tetrahedron is unstable, use single point.
-        return exp(-e0^2/σ^2)
+        return exp(-e0^2/σ^2) / sqrt(FT(π))
     end
     L_div_2 = L ./ 2
     v0_L = v0 .* L_div_2
@@ -79,5 +80,5 @@ function gaussian_parallelepiped(σ::FT, e0, v0, L) where {FT}
     val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e3, e7))
     val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e7, e5))
     val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e5, e6))
-    return val / 6
+    return val / 6 / sqrt(FT(π))
 end

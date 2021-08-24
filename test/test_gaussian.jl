@@ -19,7 +19,7 @@ using TetrahedronIntegration: integrate_gaussian_times_polynomial
     end
 
     @testset "gaussian parallelepiped" begin
-        f(x) = exp(-(e0 + dot(x, v0))^2 / σ^2)
+        f(x) = exp(-(e0 + dot(x, v0))^2 / σ^2) / sqrt(π)
         σ = 0.7
         e0 = 0.3
         v0 = SVector(0.5, -0.3, 0.2)
