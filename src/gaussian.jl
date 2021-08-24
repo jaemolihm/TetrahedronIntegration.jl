@@ -31,7 +31,6 @@ function integrate_gaussian_times_polynomial(σ::FT, coeffs, a, b, erf_ba) where
     end
     σ * val
 end
-
 integrate_gaussian_times_polynomial(σ, coeffs, a, b) = integrate_gaussian_times_polynomial(
     σ, coeffs, a, b, erf(a / σ, b / σ))
 
@@ -39,10 +38,10 @@ integrate_gaussian_times_polynomial(σ, coeffs, a, b) = integrate_gaussian_times
 Calculate ``1/volume * ∫_{tetrahedron} d^3x exp(-e(x)^2/σ^2)`` where e1234 are the
 values of e(x) at the four vertices of the tetrahedron.
 """
-@inline function gaussian_tetrahedron(σ::FT, e1234) where {FT}
+@inline function gaussian_tetrahedron(σ::FT, e1234, erf1234) where {FT}
     polys = delta_tetrahedron_polynomial(e1234)
     val = zero(FT)
-    erfs = erf.((polys[1][1], polys[2][1], polys[3][1], polys[3][2]) ./ σ)
+    erfs = sort(erf1234)
     for (i, vals) in enumerate(polys)
         e1, e2, coeffs = vals
         e1 == e2 && continue
@@ -51,6 +50,7 @@ values of e(x) at the four vertices of the tetrahedron.
     end
     val
 end
+gaussian_tetrahedron(σ, e1234) = gaussian_tetrahedron(σ, e1234, erf.(e1234 ./ σ))
 
 """
     gaussian_parallelepiped(σ::FT, e0, v0, L)
@@ -78,12 +78,20 @@ function gaussian_parallelepiped(σ::FT, e0, v0, L) where {FT}
     e6 = e0 + v0_L[1] - v0_L[2] + v0_L[3]
     e7 = e0 - v0_L[1] + v0_L[2] + v0_L[3]
     e8 = e0 + v0_L[1] + v0_L[2] + v0_L[3]
+    erf1 = erf(e1 / σ)
+    erf2 = erf(e2 / σ)
+    erf3 = erf(e3 / σ)
+    erf4 = erf(e4 / σ)
+    erf5 = erf(e5 / σ)
+    erf6 = erf(e6 / σ)
+    erf7 = erf(e7 / σ)
+    erf8 = erf(e8 / σ)
     val = zero(FT)
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e6, e2))
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e2, e4))
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e4, e3))
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e3, e7))
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e7, e5))
-    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e5, e6))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e6, e2), SVector{4,FT}(erf1, erf8, erf6, erf2))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e2, e4), SVector{4,FT}(erf1, erf8, erf2, erf4))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e4, e3), SVector{4,FT}(erf1, erf8, erf4, erf3))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e3, e7), SVector{4,FT}(erf1, erf8, erf3, erf7))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e7, e5), SVector{4,FT}(erf1, erf8, erf7, erf5))
+    val += gaussian_tetrahedron(σ, SVector{4,FT}(e1, e8, e5, e6), SVector{4,FT}(erf1, erf8, erf5, erf6))
     return val / 6 / sqrt(FT(π))
 end
