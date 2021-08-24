@@ -10,12 +10,11 @@ export gaussian_parallelepiped
 Compute ∫_a^b dx exp(-x^2/σ^2) * poly(x) = σ * ∫_{a/σ}^{b/σ} dx exp(-x^2) * poly(σx)
 where poly(x) = evalpoly(x, coeffs).
 """
-function integrate_gaussian_times_polynomial(σ::FT, coeffs, a, b) where {FT}
+function integrate_gaussian_times_polynomial(σ::FT, coeffs, a, b, erf_ba) where {FT}
     length(coeffs) > 4 && error("Quartic polynomial not implemented")
     aa = a / σ
     bb = b / σ
     sqrt_pi = sqrt(typeof(σ)(π))
-    erf_ba = erf(aa, bb)
     exp2_a = exp(-aa^2)
     exp2_b = exp(-bb^2)
     val = FT(0)
@@ -33,6 +32,9 @@ function integrate_gaussian_times_polynomial(σ::FT, coeffs, a, b) where {FT}
     σ * val
 end
 
+integrate_gaussian_times_polynomial(σ, coeffs, a, b) = integrate_gaussian_times_polynomial(
+    σ, coeffs, a, b, erf(a / σ, b / σ))
+
 """
 Calculate ``1/volume * ∫_{tetrahedron} d^3x exp(-e(x)^2/σ^2)`` where e1234 are the
 values of e(x) at the four vertices of the tetrahedron.
@@ -40,9 +42,12 @@ values of e(x) at the four vertices of the tetrahedron.
 @inline function gaussian_tetrahedron(σ::FT, e1234) where {FT}
     polys = delta_tetrahedron_polynomial(e1234)
     val = zero(FT)
-    for (e1, e2, coeffs) in polys
+    erfs = erf.((polys[1][1], polys[2][1], polys[3][1], polys[3][2]) ./ σ)
+    for (i, vals) in enumerate(polys)
+        e1, e2, coeffs = vals
         e1 == e2 && continue
-        val += integrate_gaussian_times_polynomial(σ, coeffs, e1, e2)
+        erf_21 = erfs[i+1] - erfs[i]
+        val += integrate_gaussian_times_polynomial(σ, coeffs, e1, e2, erf_21)
     end
     val
 end
